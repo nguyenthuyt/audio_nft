@@ -106,6 +106,41 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "artist",
+				"type": "string"
+			},
+			{
+				"name": "initialAppraisalValue",
+				"type": "uint256"
+			},
+			{
+				"name": "tokenURI",
+				"type": "string"
+			}
+		],
+		"name": "registeraNFT",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -222,6 +257,33 @@
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"name": "newAppraisalValue",
+				"type": "uint256"
+			},
+			{
+				"name": "reportURI",
+				"type": "string"
+			}
+		],
+		"name": "newAppraisal",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [],
 		"name": "symbol",
@@ -254,26 +316,30 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
-			{
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"name": "tokenURI",
-				"type": "string"
-			}
-		],
-		"name": "registeraNFT",
-		"outputs": [
 			{
 				"name": "",
 				"type": "uint256"
 			}
 		],
+		"name": "artCollection",
+		"outputs": [
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "artist",
+				"type": "string"
+			},
+			{
+				"name": "appraisalValue",
+				"type": "uint256"
+			}
+		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -349,6 +415,28 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "token_id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "appraisalValue",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "reportURI",
+				"type": "string"
+			}
+		],
+		"name": "Appraisal",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
