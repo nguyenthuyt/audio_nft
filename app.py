@@ -1,6 +1,7 @@
 #imports
 import os
 import json
+import requests
 from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
@@ -204,10 +205,15 @@ elif authentication_status:
             st.write(f"Token is registered to {owner}")
 
             token_uri = contract.functions.tokenURI(token_id).call()
-            image_uri = token_uri[0][1]
-            st.write(image_uri)
-            st.write(f"The tokenURI is {token_uri}")
-            st.audio(token_uri)
+            ipfs_hash = token_uri[6:]
+            token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
+            response = requests.get(token_url).json()
+            image = response['image']
+                   
+            image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
+
+            st.write(f"The tokenURI is {image_url}")
+            st.audio(image_url)
 
     ################################################################################
     # Appraise Sound NFT
