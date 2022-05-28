@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+import pandas as pd
 from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
@@ -75,14 +76,16 @@ elif authentication_status:
     ################################################################################
 
 
-    def pin_artwork(artwork_name, artwork_file):
+    def pin_artwork(artwork_name, artwork_file, value, artist_name):
         # Pin the file to IPFS with Pinata
         ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
 
         # Build a token metadata file for the artwork
         token_json = {
             "name": artwork_name,
-            "image": ipfs_file_hash
+            "artist name": artist_name,
+            "image": ipfs_file_hash,
+            "value": value
         }
         json_data = convert_data_to_json(token_json)
 
@@ -165,7 +168,7 @@ elif authentication_status:
             
             # sound is registered. 
             if st.button("Register Sound"):
-                artwork_ipfs_hash = pin_artwork(artwork_name, sound_file)
+                artwork_ipfs_hash = pin_artwork(artwork_name, sound_file, initial_appraisal_value, artist_name)
                 artwork_uri = f"ipfs://{artwork_ipfs_hash}"
                 hasher = artwork_uri
                 tx_hash = contract.functions.registeraNFT(
@@ -196,8 +199,18 @@ elif authentication_status:
         accounts = w3.eth.accounts
         selected_address = st.selectbox("Select Account", options=accounts)
         tokens = contract.functions.balanceOf(selected_address).call()
+        
         st.write(f"This address owns {tokens} tokens")
+            
         token_id = st.selectbox("Sound NFT's", list(range(tokens)))
+
+        list = []
+        for row in response:
+            list.append(pd.Series(row))
+        columns = ["name", "artist name", "image", "value"]    
+        token_df = pd.Dataframe(data=list)
+        
+        st.dataframe(token_df)
 
         if st.button('Display'):
 
@@ -212,8 +225,9 @@ elif authentication_status:
                    
             image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
 
-            st.write(f"The tokenURI is {image_url}")
-            st.audio(image_url)
+            st.write(f"The tokenURI is {token_url}")
+            
+            st.audio(image_url, format = "audio/ogg")
 
     ################################################################################
     # Appraise Sound NFT
