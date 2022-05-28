@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 import streamlit as st
 from PIL import Image
 from pinata import pin_file_to_ipfs, pin_json_to_ipfs, convert_data_to_json
-import login
 from multiprocessing import AuthenticationError
 import streamlit_authenticator as stauth
 
@@ -204,13 +203,7 @@ elif authentication_status:
             
         token_id = st.selectbox("Sound NFT's", list(range(tokens)))
 
-        list = []
-        for row in response:
-            list.append(pd.Series(row))
-        columns = ["name", "artist name", "image", "value"]    
-        token_df = pd.Dataframe(data=list)
         
-        st.dataframe(token_df)
 
         if st.button('Display'):
 
