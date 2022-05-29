@@ -1,4 +1,5 @@
 #imports
+from io import StringIO
 import os
 import json
 import requests
@@ -11,6 +12,8 @@ from PIL import Image
 from pinata import pin_file_to_ipfs, pin_json_to_ipfs, convert_data_to_json
 from multiprocessing import AuthenticationError
 import streamlit_authenticator as stauth
+import qrcode
+from PIL import Image
 
 #Accounts, username, password functionality
 names = ['Angela Richter','Jas Pinglia', 'Thuy Nguyen', 'Neil Mendelow']
@@ -73,17 +76,25 @@ elif authentication_status:
     ################################################################################
     # Helper functions to pin files and json to Pinata
     ################################################################################
-
+    def load_image(image_file):
+	    img = Image.open(image_file)
+	    return img
 
     def pin_artwork(artwork_name, artwork_file, value, artist_name):
         # Pin the file to IPFS with Pinata
         ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
+        img = qrcode.make(f"https://gateway.pinata.cloud/ipfs/{ipfs_file_hash}")
+        type(img)
+        img.save(f"{ipfs_file_hash}.jpeg")
+        
+        #THUY LOAD THIS IMAGE OF THE QR CODE TO IPFS AND GET QR CODE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< HELP!!!!!
 
         # Build a token metadata file for the artwork
         token_json = {
             "name": artwork_name,
             "artist name": artist_name,
-            "image": ipfs_file_hash,
+            "image_file": ipfs_file_hash,
+            "image_qr": ipfs_file_qr_hash,
             "value": value
         }
         json_data = convert_data_to_json(token_json)
@@ -113,16 +124,13 @@ elif authentication_status:
 
     # upload image to home screen:
     img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
-    st.image(img_1, width = 700)
+    st.image(img_1, width = 500)
 
     menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Appraise Sound NFT","Get Appraisals","About"]
     st.sidebar.header("Navigation")
     choice = st.sidebar.selectbox("Home", menu)
     st.sidebar.write("Pick a selection!")
     
-    if st.button("Get Started"):
-        choice = "Create A Sound NFT"
-
     if choice == "home":
         st.subheader("home")
         image_1 = Image.open("images/image_#1_soundNFT.jpeg")
