@@ -115,14 +115,13 @@ elif authentication_status:
     img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
     st.image(img_1, width = 700)
 
-    menu = ["Home", "Create A Sound NFT", "About", "Display A Sound NFT", "Appraise Sound NFT","Get Appraisals"]
+    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Appraise Sound NFT","Get Appraisals","About"]
     st.sidebar.header("Navigation")
-    choice = st.sidebar.selectbox("", menu)
-
+    choice = st.sidebar.selectbox("Home", menu)
     st.sidebar.write("Pick a selection!")
-
-    st.button("Get Started")
-
+    
+    if st.button("Get Started"):
+        choice = "Create A Sound NFT"
 
     if choice == "home":
         st.subheader("home")
@@ -202,9 +201,7 @@ elif authentication_status:
         st.write(f"This address owns {tokens} tokens")
             
         token_id = st.selectbox("Sound NFT's", list(range(tokens)))
-
         
-
         if st.button('Display'):
 
             owner = contract.functions.ownerOf(token_id).call()
@@ -266,7 +263,75 @@ elif authentication_status:
                     st.write(report_dictionary["args"])
             else:
                 st.write("This sound NFT has no new appraisals")
- 
+    ################################################################################
+    # Market Place - Open Sea
+    ################################################################################    
+
+    st.sidebar.header("MarketPlace")
+    market_choices = ["Pick Endpoint","Assets", "Events", "Rarity"]
+    endpoint = st.sidebar.selectbox("OpenSea Enpoints", market_choices)
+
+    if market_choices == "Assets" or market_choices == "Events" or market_choices == "Rarity":
+  
+
+        st.title(f"OpenSea API Explorer - {endpoint}")
+
+        if endpoint == 'Events':
+            collection = st.sidebar.text_input("Collection")
+            asset_contract_address = st.sidebar.text_input("Contract Address")
+            token_id = st.sidebar.text_input("Token ID")
+            event_type = st.sidebar.selectbox("Event Type", ['offer_entered', 'cancelled', 'bid_withdrawn', 'transfer', 'approve'])
+            params = {}
+            if collection:
+                params['collection_slug'] = collection
+            if asset_contract_address:
+                params['asset_contract_address'] = asset_contract_address
+            if token_id:
+                params['token_id'] = token_id
+            if event_type:
+                params['event_type'] = event_type
+        
+            r = requests.get('https://testnets-api.opensea.io/api/v1/events', params=params)
+
+            events = r.json()
+            
+            event_list = []
+            for event in events['asset_events']:
+                if event_type == 'offer_entered':
+                    if event['bid_amount']:
+                        bid_amount = Web3.fromWei(int(event['bid_amount']), 'ether')
+                    if event['from_account']['user']:
+                        bidder = event['from_account']['user']['username']
+                    else:
+                        bidder = event['from_account']['address']
+
+                    event_list.append([event['created_date'], bidder, float(bid_amount), event['asset']['collection']['name'], event['asset']['token_id']])
+
+            df = pd.DataFrame(event_list, columns=['time', 'bidder', 'bid_amount', 'collection', 'token_id'])
+            st.write(df)
+            st.write(events)
+            
+            
+
+        if endpoint == 'Assets':
+            st.sidebar.header('Filters')
+            owner = st.sidebar.text_input("Owner")
+            collection = st.sidebar.text_input("Collection")
+            
+            params = {'owner': owner}
+            if collection:
+                params['collection'] = collection
+
+            r = requests.get('https://testnets-api.opensea.io/api/v1/assets')
+
+            assets = r.json()["assets"]
+            st.subheader("Raw JSON Data")
+            st.write(r.json()["assets"])
+    
+               
+        
+        
+
 
 
 
