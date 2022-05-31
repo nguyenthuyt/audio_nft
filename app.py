@@ -14,6 +14,31 @@ from multiprocessing import AuthenticationError
 import streamlit_authenticator as stauth
 import qrcode
 from PIL import Image
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+import plotly.graph_objects as go
+import librosa
+import librosa.display
+import matplotlib.pyplot as plt
+import IPython.display as ipd
+import numpy as np
+import base64
+
+#background picture
+
+bg_ext = 'jpg'
+
+st.markdown(
+         f"""
+         <style>
+         .stApp {{
+             background: url(data:image/{bg_ext};base64,{base64.b64encode(open("Images/image_#1_soundNFT_bg.jpg", "rb").read()).decode()});
+             background-size: cover
+         }}
+         </style>
+         """,
+         unsafe_allow_html=True
+     )
+
 
 #Accounts, username, password functionality
 names = ['Angela Richter','Jas Pinglia', 'Thuy Nguyen', 'Neil Mendelow']
@@ -85,7 +110,14 @@ elif authentication_status:
         ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
         img = qrcode.make(f"https://gateway.pinata.cloud/ipfs/{ipfs_file_hash}")
         type(img)
-        img.save(f"{ipfs_file_hash}.jpeg")
+        image_qr = img.save("QR.jpeg")
+        #qr_file_image = Image.open("QR.jpeg")
+        #qr_path = ".\QR.jpeg"
+        #qr_file_path = Path(qr_path)
+        #uploaded_file = qr_file_path.read()
+        #qr_image_hash = pin_file_to_ipfs(uploaded_file)
+
+    #    qr_ipfs_hash = pin_file_to_ipfs(qr_file_image.getvalue())
         
         #THUY LOAD THIS IMAGE OF THE QR CODE TO IPFS AND GET QR CODE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< HELP!!!!!
 
@@ -93,8 +125,7 @@ elif authentication_status:
         token_json = {
             "name": artwork_name,
             "artist name": artist_name,
-            "image_file": ipfs_file_hash,
-            "image_qr": ipfs_file_qr_hash,
+            "image": ipfs_file_hash,
             "value": value
         }
         json_data = convert_data_to_json(token_json)
@@ -110,23 +141,47 @@ elif authentication_status:
         report_ipfs_hash = pin_json_to_ipfs(json_report)
         return report_ipfs_hash
 
+    ################################################################################
+    # Helper functions to create spectrograms
+    ################################################################################
+    def generate_spect(file):
+        y, sr = librosa.load(file, offset =0.0, duration=5.0)
 
-    #st.title("Sound NFT Appraisal System")
-    #st.write("Choose an account to get started")
-    accounts = w3.eth.accounts
-    #address = st.selectbox("Select Account", options=accounts)
-    st.markdown("---")
 
+        y, sr = librosa.load(file, duration=5)
+        fig, ax = plt.subplots(nrows=3, sharex=True)
+        librosa.display.waveshow(y, sr=sr, ax=ax[0])
+        ax[0].set(title='ok boomer waveplot, mono')
+        ax[0].label_outer()
+
+        name = "OK Boomer"
+        S = np.abs(librosa.stft(y))
+        chroma = librosa.feature.chroma_stft(S=S, sr=sr)
+        fig, ax = plt.subplots(nrows=2, sharex=True)
+        img1 = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max),y_axis='log', x_axis='time', ax=ax[0])
+        spect_1 = fig.colorbar(img1, ax=[ax[0]])
+        ax[0].label_outer()
+        img2 = librosa.display.specshow(chroma, y_axis='chroma', x_axis='time', ax=ax[1])
+        spect_2 = fig.colorbar( img2, ax=[ax[1]],label = name )
+
+        return spect_1, spect_2
+
+    ################################################################################
+    # STREAMLIT HOME PAGE
+    ################################################################################
+    
+
+    
 
     # accounts connected to injected web3
-    st.title("Sound NFTs - Gotta Collect Em All")
-    st.header("Register A Sound as NFT!!")
+    st.title("Just Audio Non-fungible Tokens")
+    st.header("Gotta Collect Em All")
 
     # upload image to home screen:
-    img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
-    st.image(img_1, width = 500)
+    #img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
+    #st.image(img_1, width = 500)
 
-    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Appraise Sound NFT","Get Appraisals","About"]
+    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display A Sound NFT Collection","Appraise Sound NFT","Get Appraisals","About"]
     st.sidebar.header("Navigation")
     choice = st.sidebar.selectbox("Home", menu)
     st.sidebar.write("Pick a selection!")
@@ -209,23 +264,139 @@ elif authentication_status:
         st.write(f"This address owns {tokens} tokens")
             
         token_id = st.selectbox("Sound NFT's", list(range(tokens)))
+
+        token_list = (list(range(tokens)))
+            
         
         if st.button('Display'):
 
             owner = contract.functions.ownerOf(token_id).call()
             st.write(f"Token is registered to {owner}")
+            
 
             token_uri = contract.functions.tokenURI(token_id).call()
             ipfs_hash = token_uri[6:]
             token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
             response = requests.get(token_url).json()
+            st.write(f"The tokenURI is {token_url}")
             image = response['image']
+            name = response['name']
+            artist_name = response['artist name']
+            value = response['value']
+            
+                   
+            image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
+            st.write(f"The soundURI is {image_url}")
+            img = qrcode.make(image_url)
+            type(img)
+            image_qr = img.save(f"{image}.jpeg")
+            #qr_file_image = Image.open("QR.jpeg")
+            st.image(f"{image}.jpeg")
+
+            
+
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.subheader("Name")
+                st.write(name)
+            with col2:
+                st.subheader("Artist")    
+                st.write(artist_name)
+            with col3:
+                st.subheader("Value")
+                st.write(f"$ {value}")
+            with col4:
+                st.subheader("NFT")
+                st.audio(image_url, format = "audio/ogg")
+
+            
+  
+            # gb = GridOptionsBuilder.from_dataframe(df)
+            # gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
+            # gb.configure_side_bar() #Add a sidebar
+            # gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
+            # gridOptions = gb.build()
+
+            # grid_response = AgGrid(
+            #     df,
+            #     gridOptions=gridOptions,
+            #     data_return_mode='AS_INPUT', 
+            #     update_mode='MODEL_CHANGED', 
+            #     fit_columns_on_grid_load=True,
+            #     theme='dark', #Add theme color to the table
+            #     enable_enterprise_modules=True,
+            #     height=350, 
+            #     width='100%',
+            #     reload_data=False
+            # )
+
+            # grid_data = grid_response['data']
+            # selected = grid_response['selected_rows'] 
+            # dfs = pd.DataFrame(selected) #Pass the selected rows to a new dataframe df
+
+            
+            
+
+    ################################################################################
+    # Display Sound NFT Collection
+    ################################################################################
+    elif choice == "Display A Sound NFT Collection":
+        st.subheader("Display A Sound NFT Collection")
+
+
+        accounts = w3.eth.accounts
+        selected_address = st.selectbox("Select Account", options=accounts)
+        tokens = contract.functions.balanceOf(selected_address).call()
+        token_list = (list(range(tokens)))
+        
+            
+        
+        data = []
+
+        for i in range(tokens):
+
+            token_uri = contract.functions.tokenURI(i).call()
+            ipfs_hash = token_uri[6:]
+            token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
+            response = requests.get(token_url).json()
+            image = response['image']
+            name = response['name']
+            artist_name = response['artist name']
+            value = response['value']
                    
             image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
 
-            st.write(f"The tokenURI is {token_url}")
             
-            st.audio(image_url, format = "audio/ogg")
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.subheader("Name")
+                st.write(name)
+            with col2:
+                st.subheader("Artist")    
+                st.write(artist_name)
+            with col3:
+                st.subheader("Value")
+                st.write(f"$ {value}")
+            with col4:
+                st.subheader("NFT")
+                st.audio(image_url, format = "audio/ogg")
+
+            data.append(
+                {
+                    'token_id':i,
+                    'name': name,
+                    'artist name': artist_name,
+                    'value' : value,
+                    'sound': st.audio(image_url),
+                    }
+            )
+
+        df = pd.DataFrame(data)
+        st.write(data)    
+
+        
+
+        
 
     ################################################################################
     # Appraise Sound NFT
@@ -255,6 +426,12 @@ elif authentication_status:
 
     elif choice == "Get Appraisals":
         st.subheader("## Get the appraisal report history")
+        st.title("Sound NFT Appraisal System")
+        st.write("Choose an account to get started")
+        accounts = w3.eth.accounts
+        address = st.selectbox("Select Account", options=accounts)
+        st.markdown("---")
+
         art_token_id = st.number_input("Sound Token ID", value=0, step=1)
         if st.button("Get Appraisal Reports"):
             appraisal_filter = contract.events.Appraisal.createFilter(
