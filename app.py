@@ -383,17 +383,52 @@ elif authentication_status:
 
             data.append(
                 {
-                    'token_id':i,
                     'name': name,
                     'artist name': artist_name,
                     'value' : value,
-                    'sound': st.audio(image_url),
+                    'sound': image_url,
                     }
             )
 
         df = pd.DataFrame(data)
-        st.write(data)    
+        st.write(df)    
 
+        audio_file1 = open('./Sounds/covidcough.wav', 'rb') #enter the filename with filepath
+
+        audio_bytes1 = audio_file1.read() #reading the file
+
+        st.audio(audio_bytes1, format='audio/wav') #displaying the audio
+        category = st.multiselect(
+        'Select Categories',
+        ['Green', 'Yellow', 'Red', 'Blue'])
+
+        if category is not None:
+            st.write('You selected:', category)
+        #NFT Dataframe
+
+    
+        gb = GridOptionsBuilder.from_dataframe(df)
+        gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
+        gb.configure_side_bar() #Add a sidebar
+        gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
+        gridOptions = gb.build()
+
+        grid_response = AgGrid(
+            df,
+            gridOptions=gridOptions,
+            data_return_mode='AS_INPUT', 
+            update_mode='MODEL_CHANGED', 
+            fit_columns_on_grid_load=True,
+            theme='dark', #Add theme color to the table
+            enable_enterprise_modules=True,
+            height=350, 
+            width='100%',
+            reload_data=False
+        )
+
+        grid_data = grid_response['data']
+        selected = grid_response['selected_rows'] 
+        dfs = pd.DataFrame(selected) #Pass the selected rows to a new dataframe df
         
 
         
