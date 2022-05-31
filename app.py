@@ -1,4 +1,8 @@
-#imports
+###################################################################################
+    # Imports
+###################################################################################
+
+
 from io import StringIO
 import os
 import json
@@ -23,7 +27,10 @@ import IPython.display as ipd
 import numpy as np
 import base64
 
-#background picture
+###################################################################################
+    # Background Picture
+###################################################################################
+
 
 bg_ext = 'jpg'
 
@@ -40,7 +47,10 @@ st.markdown(
      )
 
 
-#Accounts, username, password functionality
+###################################################################################
+    # Accounts, username, password functionality
+###################################################################################
+
 names = ['Angela Richter','Jas Pinglia', 'Thuy Nguyen', 'Neil Mendelow']
 usernames = ['arich','jpag', 'tweezy4sheezy', 'nmannilow']
 passwords = ['123','1234', '12345', '123456']
@@ -63,28 +73,32 @@ elif authentication_status:
     st.write('Welcome *%s*' % (name))
     st.title('Your JANT Account!')
 
-    # load .env file
+###################################################################################
+    # Load .env files and connect to web3
+###################################################################################
+
+    # Load .env file
     load_dotenv()
 
-    # connect to web3
+    # Connect to web3
     w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 
-    ################################################################################
+###################################################################################
     # Contract Helper function:
     # 1. Loads the contract once using cache
     # 2. Connects to the contract using the contract address and ABI
-    ################################################################################
+###################################################################################
 
-    # stop streamlit from auto-refreshing.
+    # Stop streamlit from auto-refreshing.
     @st.cache(allow_output_mutation=True)
 
-    # load contract details for deployed contract on injected web3
+    # Load contract details for deployed contract on injected web3
     def load_contract():
         # load json abi file.
         with open(Path('contracts/compiled/soundToken_abi.json')) as f:
             artwork_abi = json.load(f)
 
-        # connect to smart deployed smart contract
+        # Connect to smart deployed smart contract
         contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
 
         contract = w3.eth.contract(
@@ -94,13 +108,13 @@ elif authentication_status:
 
         return contract
 
-    # load contract information
+    # Load contract information
     contract = load_contract()
 
 
-    ################################################################################
+###################################################################################
     # Helper functions to pin files and json to Pinata
-    ################################################################################
+###################################################################################
     def load_image(image_file):
 	    img = Image.open(image_file)
 	    return img
@@ -141,9 +155,9 @@ elif authentication_status:
         report_ipfs_hash = pin_json_to_ipfs(json_report)
         return report_ipfs_hash
 
-    ################################################################################
+###################################################################################
     # Helper functions to create spectrograms
-    ################################################################################
+###################################################################################
     def generate_spect(file):
         y, sr = librosa.load(file, offset =0.0, duration=5.0)
 
@@ -166,14 +180,11 @@ elif authentication_status:
 
         return spect_1, spect_2
 
-    ################################################################################
+###################################################################################
     # STREAMLIT HOME PAGE
-    ################################################################################
-    
+###################################################################################
 
-    
-
-    # accounts connected to injected web3
+    # Header
     st.title("Just Audio Non-fungible Tokens")
     st.header("Gotta Collect Em All")
 
@@ -181,6 +192,7 @@ elif authentication_status:
     #img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
     #st.image(img_1, width = 500)
 
+    # Menu Sidebar
     menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display A Sound NFT Collection","Appraise Sound NFT","Get Appraisals","About"]
     st.sidebar.header("Navigation")
     choice = st.sidebar.selectbox("Home", menu)
@@ -192,7 +204,7 @@ elif authentication_status:
         st.image(image_1, caption="Here hear this sound!")
 
     ################################################################################
-    # Create a New Sound NFT
+    # Option 1 - Create a New Sound NFT
     ################################################################################
 
     elif choice == "Create A Sound NFT":
@@ -226,7 +238,6 @@ elif authentication_status:
             address = st.selectbox("Select Sound Owner", options=accounts)
 
 
-            
             # sound is registered. 
             if st.button("Register Sound"):
                 artwork_ipfs_hash = pin_artwork(artwork_name, sound_file, initial_appraisal_value, artist_name)
@@ -245,12 +256,10 @@ elif authentication_status:
                 st.write("You can view the pinned metadata file with the following IPFS Gateway Link")
                 st.markdown(f"[Artwork IPFS Gateway Link](https://ipfs.io/ipfs/{artwork_ipfs_hash})")
             st.markdown("---")
-
-
         
 
     ################################################################################
-    # Display a Sound NFT
+    # Option 2 - Display a Sound NFT
     ################################################################################
 
     elif choice == "Display A Sound NFT":
@@ -338,7 +347,7 @@ elif authentication_status:
             
 
     ################################################################################
-    # Display Sound NFT Collection
+    # Option 3 - Display Sound NFT Collection
     ################################################################################
     elif choice == "Display A Sound NFT Collection":
         st.subheader("Display A Sound NFT Collection")
@@ -393,11 +402,11 @@ elif authentication_status:
         df = pd.DataFrame(data)
         st.write(df)    
 
-        audio_file1 = open('./Sounds/covidcough.wav', 'rb') #enter the filename with filepath
+        #audio_file1 = open('./Sounds/covidcough.wav', 'rb') #enter the filename with filepath
 
-        audio_bytes1 = audio_file1.read() #reading the file
+        #audio_bytes1 = audio_file1.read() #reading the file
 
-        st.audio(audio_bytes1, format='audio/wav') #displaying the audio
+        #st.audio(audio_bytes1, format='audio/wav') #displaying the audio
         category = st.multiselect(
         'Select Categories',
         ['Green', 'Yellow', 'Red', 'Blue'])
@@ -409,8 +418,10 @@ elif authentication_status:
     
         gb = GridOptionsBuilder.from_dataframe(df)
         gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
+        gb.configure_default_column(editable = True, groupable = True)
         gb.configure_side_bar() #Add a sidebar
-        gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
+        sel_mode = st.radio('Selection Type', options = ['single', 'multiple'])
+        gb.configure_selection(selection_mode = sel_mode, use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
         gridOptions = gb.build()
 
         grid_response = AgGrid(
@@ -429,12 +440,15 @@ elif authentication_status:
         grid_data = grid_response['data']
         selected = grid_response['selected_rows'] 
         dfs = pd.DataFrame(selected) #Pass the selected rows to a new dataframe df
-        
 
+        #for row in dfs.iterrows():
+        #    df.loc[row,'media'] = pd.concat("st.image(",df[row,'sound'],")")
+        
+        
         
 
     ################################################################################
-    # Appraise Sound NFT
+    # Option 4 - Appraise Sound NFT
     ################################################################################
 
     elif choice == "Appraise Sound NFT":
@@ -456,7 +470,7 @@ elif authentication_status:
         st.markdown("---")
 
     ################################################################################
-    # Get Appraisals
+    # Option 5 - Get Appraisals
     ################################################################################
 
     elif choice == "Get Appraisals":
