@@ -18,7 +18,7 @@ from multiprocessing import AuthenticationError
 import streamlit_authenticator as stauth
 import qrcode
 from PIL import Image
-#from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
 import plotly.graph_objects as go
 import librosa
 import librosa.display
@@ -45,7 +45,6 @@ st.markdown(
          """,
          unsafe_allow_html=True
      )
-
 
 ###################################################################################
     # Accounts, username, password functionality
@@ -484,7 +483,29 @@ elif authentication_status:
                 )
             
             token_list_df = pd.DataFrame(token_list).set_index(["token"])
-            st.write(token_list_df)
+
+            df = token_list_df
+  
+            gb = GridOptionsBuilder.from_dataframe(df)
+            gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
+            gb.configure_side_bar() #Add a sidebar
+            #gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
+            gridOptions = gb.build()
+
+            grid_response = AgGrid(
+                df,
+                gridOptions=gridOptions,
+                data_return_mode='AS_INPUT', 
+                update_mode='MODEL_CHANGED', 
+                fit_columns_on_grid_load=True,
+                theme='dark', #Add theme color to the table
+                enable_enterprise_modules=True,
+                height=350, 
+                width='100%',
+                reload_data=False
+            )
+
+            #st.write(token_list_df)
 
             # Select multiple token ids for display    
             token_id = st.multiselect("Sound NFT's", list(range(tokens)))
