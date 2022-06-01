@@ -49,18 +49,16 @@ To compile and deploy the file using the following steps:
 - From the Contract menu, select the audio_nft_sc contract
 - Compile and deploy the contract
 
-![Remix Compile](Evaluation_Evidence/KaseiCoinCrowdsaleDeployer.PNG)
+![Remix Compile](Images/compile.jpg)
 
 - An instance of Metamask will appear asking to confirm the transaction. Click confirm to proceed.
 
-
+![Remix Deploy](Images/deploy.jpg)
 
 ## Populate .env file
 
 - Navigate to SAMPLE.env and populate with the deployed contract address from Remix IDE. Also, fill in Pinata API information and Ganache RPC URL.
-![SAMPLE env](Sample_env.PNG)
-
-
+![SAMPLE env](Images/env.jpg)
 
 
 
@@ -68,7 +66,7 @@ To compile and deploy the file using the following steps:
 ## Streamlit Demo
 
 In the terminal, Streamlit run app.py
-![Demo video](Images/TBD.mov)
+![Demo video](Images/demo.mp4)
 
 
 
