@@ -139,30 +139,6 @@ elif authentication_status:
         report_ipfs_hash = pin_json_to_ipfs(json_report)
         return report_ipfs_hash
 
-###################################################################################
-    # Helper functions to create spectrograms
-###################################################################################
-    def generate_spect(file):
-        y, sr = librosa.load(file, offset =0.0, duration=5.0)
-
-
-        y, sr = librosa.load(file, duration=5)
-        fig, ax = plt.subplots(nrows=3, sharex=True)
-        librosa.display.waveshow(y, sr=sr, ax=ax[0])
-        ax[0].set(title='spectrogram waveplot, mono')
-        ax[0].label_outer()
-
-        name = "Spectrogram"
-        S = np.abs(librosa.stft(y))
-        chroma = librosa.feature.chroma_stft(S=S, sr=sr)
-        fig, ax = plt.subplots(nrows=2, sharex=True)
-        img1 = librosa.display.specshow(librosa.amplitude_to_db(S, ref=np.max),y_axis='log', x_axis='time', ax=ax[0])
-        spect_1 = fig.colorbar(img1, ax=[ax[0]])
-        ax[0].label_outer()
-        img2 = librosa.display.specshow(chroma, y_axis='chroma', x_axis='time', ax=ax[1])
-        spect_2 = fig.colorbar( img2, ax=[ax[1]],label = name )
-
-        return spect_1, spect_2
 
 ###################################################################################
     # STREAMLIT HOME PAGE
@@ -185,11 +161,11 @@ elif authentication_status:
         st.write('Welcome *%s*' % (name))
         
         st.header("[J]ust [A]udio [N]on-fungible [T]okens")
-        st.subheader("Gotta Collect Em All!")
+        #st.subheader("Gotta Collect Em All!")
 
         
-        image_1 = Image.open("images/image_#1_soundNFT.jpeg")
-        st.image(image_1, caption="Here hear this sound!")
+        image_1 = Image.open("images/nft.png")
+        st.image(image_1, caption="LET'S GET STARTED!")
         #st.audio("Sounds/success_horn.wav")
         #mymidia_bytes = ("Sounds/success_horn.wav")
 
@@ -693,7 +669,20 @@ elif authentication_status:
 
     elif choice == "About":
         st.title("Meet the creators of JANT")
-        #st.image(".jpeg")        
+        st.image("Images/rushmore.PNG")        
+        mymidia_placeholder = st.empty()
+
+        mymidia_str = "data:audio/ogg;base64,%s"%(base64.b64encode(open("Sounds/dun_dun.wav", "rb").read()).decode())
+        mymidia_html = """
+                        <audio autoplay class="stAudio">
+                        <source src="%s" type="audio/ogg">
+                        Your browser does not support the audio element.
+                        </audio>
+                    """%mymidia_str
+
+        mymidia_placeholder.empty()
+        #time.sleep(1)
+        mymidia_placeholder.markdown(mymidia_html, unsafe_allow_html=True)
         
 
 
