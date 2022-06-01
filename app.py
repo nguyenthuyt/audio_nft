@@ -20,8 +20,6 @@ import qrcode
 from PIL import Image
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
 import plotly.graph_objects as go
-import librosa
-import librosa.display
 import matplotlib.pyplot as plt
 import IPython.display as ipd
 import numpy as np
