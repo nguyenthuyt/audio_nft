@@ -65,7 +65,9 @@ To compile and deploy the file using the following steps:
 
 ## Streamlit Demo
 
-In the terminal, Streamlit run app.py
+In the terminal, type ```Streamlit run app.py```
+
+Click link for demo video.
 ![Demo video](Images/demo.mp4)
 
 
