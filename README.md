@@ -68,8 +68,11 @@ In the terminal, Streamlit run app.py
 This project was created as part of the Rice Fintech Bootcamp 2022 Program by:
 
 Jas Pinglia - https://github.com/jpinglia ; https://www.linkedin.com/in/JPinglia
+
 Angela Richter - https://github.com/angie0920 ; https://www.linkedin.com/in/angela-richter-55017233
+
 Neil Mendelow - https://github.com/nmendelow ; https://www.linkedin.com/in/neil-mendelow/ 
+
 Thuy Nguyen - https://github.com/nguyenthuyt ; https://linkedin.com/in/nguyenthuyt
 
 
