@@ -1,6 +1,6 @@
 # Just Audio Non-Fungible Tokens (JANT)
 
-The purpose of this challenge is to use Solidity to launch a crowdsale contract that will allow people who are moving to Mars to convert their earthling money to KaseiCoin. You will create a fungible token that is ERC-20 compliant and that will be minted by using a Crowdsale contract from the OpenZeppelin Solidity library.
+The purpose of JANT is to host a streamlit web app to allow users to register, collect, and view sound NFT's.
     
 ---
 
@@ -43,18 +43,17 @@ To compile and deploy the file using the following steps:
 ## Populate .env file
 
 - Navigate to SAMPLE.env and populate with the deployed contract address from Remix IDE. Also, fill in Pinata API information and Ganache RPC URL.
-![Remix Minted Tokens]("""".PNG)
+![SAMPLE env](Sample_env.PNG)
 
 
-- To view the total wei raised from the crowdsale, navigate to the KaseiCoinCrowdsale contract and click on 'weiRaised'
-![Remix Wei Raised](.PNG)
+
 
 
 
 ## Streamlit Demo
 
 In the terminal, Streamlit run app.py
-![Remix KaseiCoin Token Contract](Evaluation_Evidence/compiled_KaseiCoin.PNG)
+![Demo video](Images/TBD.mov)
 
 
 
@@ -85,5 +84,3 @@ MIT
 
 
 
-# audio_nft
-Audio NFT Marketplace
