@@ -142,12 +142,6 @@ elif authentication_status:
     # STREAMLIT HOME PAGE
 ###################################################################################
 
-
-    # upload image to home screen:
-    #img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
-    #st.image(img_1, width = 500)
-
-
     # Menu Sidebar
     menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","MarketPlace - Under Construction","About"]
     st.sidebar.header("Navigation")
@@ -164,9 +158,7 @@ elif authentication_status:
         
         image_1 = Image.open("images/nft.png")
         st.image(image_1, caption="LET'S GET STARTED!")
-        #st.audio("Sounds/success_horn.wav")
-        #mymidia_bytes = ("Sounds/success_horn.wav")
-
+        
         mymidia_placeholder = st.empty()
 
         mymidia_str = "data:audio/ogg;base64,%s"%(base64.b64encode(open("Sounds/success_horn.wav", "rb").read()).decode())
@@ -178,7 +170,7 @@ elif authentication_status:
                     """%mymidia_str
 
         mymidia_placeholder.empty()
-        #time.sleep(1)
+
         mymidia_placeholder.markdown(mymidia_html, unsafe_allow_html=True)
 
     ################################################################################
@@ -667,7 +659,10 @@ elif authentication_status:
 
     elif choice == "About":
         st.title("Meet the creators of JANT")
-        st.image("Images/rushmore.PNG")        
+        st.subheader("[J]as,  [A]ngela,  [N]eil,  [T]huy")
+        image_2 = Image.open("Images/rushmore.PNG")
+        st.image(image_2, caption="Left to right: Thuy, Angela, Neil, Jas")
+        
         mymidia_placeholder = st.empty()
 
         mymidia_str = "data:audio/ogg;base64,%s"%(base64.b64encode(open("Sounds/dun_dun.wav", "rb").read()).decode())
