@@ -69,8 +69,7 @@ elif authentication_status == None:
     st.warning('Please enter your username and password')  
 elif authentication_status:
     authenticator.logout('Logout', 'main')
-    st.write('Welcome *%s*' % (name))
-    st.title('Your JANT Account!')
+
 
 ###################################################################################
     # Load .env files and connect to web3
@@ -169,9 +168,6 @@ elif authentication_status:
     # STREAMLIT HOME PAGE
 ###################################################################################
 
-    # Header
-    st.title("Just Audio Non-fungible Tokens")
-    st.header("Gotta Collect Em All!")
 
     # upload image to home screen:
     #img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
@@ -179,13 +175,19 @@ elif authentication_status:
 
 
     # Menu Sidebar
-    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","MarketPlace","About"]
+    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","MarketPlace - Under Construction","About"]
     st.sidebar.header("Navigation")
     choice = st.sidebar.selectbox("Menu", menu)
     st.sidebar.write("Pick a selection!")
     
     if choice == "Home":
-        st.subheader("Home")
+            # Header
+        st.write('Welcome *%s*' % (name))
+        
+        st.header("[J]ust [A]udio [N]on-fungible [T]okens")
+        st.subheader("Gotta Collect Em All!")
+
+        
         image_1 = Image.open("images/image_#1_soundNFT.jpeg")
         st.image(image_1, caption="Here hear this sound!")
         #st.audio("Sounds/success_horn.wav")
@@ -482,7 +484,7 @@ elif authentication_status:
                         }
                 )
             
-            token_list_df = pd.DataFrame(token_list).set_index(["token"])
+            token_list_df = pd.DataFrame(token_list)
 
             df = token_list_df
   
@@ -623,8 +625,8 @@ elif authentication_status:
     ################################################################################    
 
     #Create a market palce sidebar and choices.
-    elif choice == "MarketPlace":
-        st.sidebar.header("MarketPlace")
+    elif choice == "MarketPlace - Under Construction":
+        st.sidebar.header("MarketPlace - Under Construction")
         market_choices = ["Pick Endpoint","Assets", "Events", "Rarity"]
         endpoint = st.sidebar.selectbox("OpenSea Enpoints", market_choices)
 
@@ -685,6 +687,13 @@ elif authentication_status:
             st.subheader("Raw JSON Data")
             st.write(r.json()["assets"])               
         
+    ################################################################################
+    # Option 6 - About
+    ################################################################################
+
+    elif choice == "About":
+        st.title("Meet the creators of JANT")
+        #st.image(".jpeg")        
         
 
 
