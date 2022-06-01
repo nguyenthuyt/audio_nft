@@ -8,17 +8,17 @@ The world's attention span seems to be shrinking. People are gravitating towards
 
 This analysis leverages Solidity (pragma ^0.5.5) and utilizes Remix IDE, Metamask, and Ganache to build and test smart contracts.
 The following python libraries should also be installed in the enviromenet from which you run the app.py file:
-web3
-pathlib
-dotenv
-streamlit
-pinata
-multiprocessing
-streamlit-authenticator
-qrcode
-st_aggrid
-numpy
-base 64
+- web3
+- pathlib
+- dotenv
+- streamlit
+- pinata
+- multiprocessing
+- streamlit-authenticator
+- qrcode
+- st_aggrid
+- numpy
+- base 64
 
 
 
