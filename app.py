@@ -18,7 +18,7 @@ from multiprocessing import AuthenticationError
 import streamlit_authenticator as stauth
 import qrcode
 from PIL import Image
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+#from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
 import plotly.graph_objects as go
 import librosa
 import librosa.display
@@ -322,47 +322,6 @@ elif authentication_status:
             with col4:
                 st.subheader("NFT")
                 st.audio(image_url, format = "audio/ogg")
-
-            file_url = ("Sounds/trains.wav")
-            mymidia_placeholder = st.empty()
-
-            mymidia_str = "data:audio/ogg;base64,%s"%(base64.b64encode(open(file_url, "rb").decode()))
-            mymidia_html = """
-                            <audio autoplay class="stAudio">
-                            <source src="%s" type="audio/ogg">
-                            Your browser does not support the audio element.
-                            </audio>
-                        """%mymidia_str
-
-            mymidia_placeholder.empty()
-            #time.sleep(1)
-            mymidia_placeholder.markdown(mymidia_html, unsafe_allow_html=True)
-
-  
-            # gb = GridOptionsBuilder.from_dataframe(df)
-            # gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
-            # gb.configure_side_bar() #Add a sidebar
-            # gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
-            # gridOptions = gb.build()
-
-            # grid_response = AgGrid(
-            #     df,
-            #     gridOptions=gridOptions,
-            #     data_return_mode='AS_INPUT', 
-            #     update_mode='MODEL_CHANGED', 
-            #     fit_columns_on_grid_load=True,
-            #     theme='dark', #Add theme color to the table
-            #     enable_enterprise_modules=True,
-            #     height=350, 
-            #     width='100%',
-            #     reload_data=False
-            # )
-
-            # grid_data = grid_response['data']
-            # selected = grid_response['selected_rows'] 
-            # dfs = pd.DataFrame(selected) #Pass the selected rows to a new dataframe df
-
-            
             
 
     ################################################################################
