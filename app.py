@@ -115,26 +115,12 @@ elif authentication_status:
 ###################################################################################
     # Helper functions to pin files and json to Pinata
 ###################################################################################
-    def load_image(image_file):
-	    img = Image.open(image_file)
-	    return img
-
+    
+    # Pinata helper function - pin_artwork
     def pin_artwork(artwork_name, artwork_file, value, artist_name):
         # Pin the file to IPFS with Pinata
         ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
-        img = qrcode.make(f"https://gateway.pinata.cloud/ipfs/{ipfs_file_hash}")
-        type(img)
-        image_qr = img.save("QR.jpeg")
-        #qr_file_image = Image.open("QR.jpeg")
-        #qr_path = ".\QR.jpeg"
-        #qr_file_path = Path(qr_path)
-        #uploaded_file = qr_file_path.read()
-        #qr_image_hash = pin_file_to_ipfs(uploaded_file)
-
-    #    qr_ipfs_hash = pin_file_to_ipfs(qr_file_image.getvalue())
         
-        #THUY LOAD THIS IMAGE OF THE QR CODE TO IPFS AND GET QR CODE<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< HELP!!!!!
-
         # Build a token metadata file for the artwork
         token_json = {
             "name": artwork_name,
@@ -165,10 +151,10 @@ elif authentication_status:
         y, sr = librosa.load(file, duration=5)
         fig, ax = plt.subplots(nrows=3, sharex=True)
         librosa.display.waveshow(y, sr=sr, ax=ax[0])
-        ax[0].set(title='ok boomer waveplot, mono')
+        ax[0].set(title='spectrogram waveplot, mono')
         ax[0].label_outer()
 
-        name = "OK Boomer"
+        name = "Spectrogram"
         S = np.abs(librosa.stft(y))
         chroma = librosa.feature.chroma_stft(S=S, sr=sr)
         fig, ax = plt.subplots(nrows=2, sharex=True)
@@ -186,22 +172,24 @@ elif authentication_status:
 
     # Header
     st.title("Just Audio Non-fungible Tokens")
-    st.header("Gotta Collect Em All")
+    st.header("Gotta Collect Em All!")
 
     # upload image to home screen:
     #img_1 = Image.open("Images/image_#1_soundNFT.jpeg")
     #st.image(img_1, width = 500)
 
+
     # Menu Sidebar
-    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display A Sound NFT Collection","Appraise Sound NFT","Get Appraisals","About"]
+    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","About"]
     st.sidebar.header("Navigation")
-    choice = st.sidebar.selectbox("Home", menu)
+    choice = st.sidebar.selectbox("Menu", menu)
     st.sidebar.write("Pick a selection!")
     
-    if choice == "home":
-        st.subheader("home")
+    if choice == "Home":
+        st.subheader("Home")
         image_1 = Image.open("images/image_#1_soundNFT.jpeg")
         st.image(image_1, caption="Here hear this sound!")
+        st.audio("Sounds/success_horn.wav")
 
     ################################################################################
     # Option 1 - Create a New Sound NFT
@@ -302,6 +290,8 @@ elif authentication_status:
             #qr_file_image = Image.open("QR.jpeg")
             st.image(f"{image}.jpeg")
 
+            generate_spect(image_url)
+
             
 
             col1, col2, col3, col4 = st.columns(4)
@@ -347,10 +337,10 @@ elif authentication_status:
             
 
     ################################################################################
-    # Option 3 - Display Sound NFT Collection
+    # Option 3 - Display JANT Collection
     ################################################################################
-    elif choice == "Display A Sound NFT Collection":
-        st.subheader("Display A Sound NFT Collection")
+    elif choice == "My JANT Collection":
+        st.subheader("My JANT Collection")
 
 
         accounts = w3.eth.accounts
@@ -358,10 +348,26 @@ elif authentication_status:
         tokens = contract.functions.balanceOf(selected_address).call()
         token_list = (list(range(tokens)))
         
-            
         
+        # Create empty list to populate tokens dataframe
         data = []
 
+        # Set column headers
+        col1, col2, col3,col4,col5, col6 = st.columns(6)
+        with col1:
+            st.subheader("Token")
+        with col2:
+            st.subheader("Name")
+        with col3:
+            st.subheader("Artist")
+        with col4:
+            st.subheader("Value")
+        with col5:
+            st.subheader("NFT")
+        with col6:
+            st.subheader("QR Code")
+
+        # Populate data list
         for i in range(tokens):
 
             token_uri = contract.functions.tokenURI(i).call()
@@ -375,80 +381,182 @@ elif authentication_status:
                    
             image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
 
-            
-            col1, col2, col3, col4 = st.columns(4)
+            #Generate QR Code
+            img = qrcode.make(image_url)
+            type(img)
+            image_qr = img.save(f"{image}.jpeg")
+        
+            # Create table of NFT's
+            col1, col2, col3, col4,col5,col6 = st.columns(6)
             with col1:
-                st.subheader("Name")
-                st.write(name)
+                #st.subheader("Name")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(f"**{i}**")
+            
             with col2:
-                st.subheader("Artist")    
-                st.write(artist_name)
+                #st.subheader("Name")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(f"**{name}**")
             with col3:
-                st.subheader("Value")
-                st.write(f"$ {value}")
+                #st.subheader("Artist")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")    
+                st.write(f"**{artist_name}**")
             with col4:
-                st.subheader("NFT")
+                #st.subheader("Value")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
+                st.write(f"**$ {value}**")
+            with col5:
+                #st.subheader("NFT")
+                st.write(" ")
+                st.write(" ")
+                st.write(" ")
                 st.audio(image_url, format = "audio/ogg")
+            with col6:
+                st.image(f"{image}.jpeg")
 
+            st.write("------------------------------------------------")
+
+            # Append NFT metadata to data list
             data.append(
                 {
                     'name': name,
                     'artist name': artist_name,
                     'value' : value,
-                    'sound': image_url,
+                    'sound': image_url
+                    
                     }
             )
 
+        # Convert data to dataframe
+
         df = pd.DataFrame(data)
-        st.write(df)    
-
-        #audio_file1 = open('./Sounds/covidcough.wav', 'rb') #enter the filename with filepath
-
-        #audio_bytes1 = audio_file1.read() #reading the file
-
-        #st.audio(audio_bytes1, format='audio/wav') #displaying the audio
-        category = st.multiselect(
-        'Select Categories',
-        ['Green', 'Yellow', 'Red', 'Blue'])
-
-        if category is not None:
-            st.write('You selected:', category)
-        #NFT Dataframe
-
-    
-        gb = GridOptionsBuilder.from_dataframe(df)
-        gb.configure_pagination(paginationAutoPageSize=True) #Add pagination
-        gb.configure_default_column(editable = True, groupable = True)
-        gb.configure_side_bar() #Add a sidebar
-        sel_mode = st.radio('Selection Type', options = ['single', 'multiple'])
-        gb.configure_selection(selection_mode = sel_mode, use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
-        gridOptions = gb.build()
-
-        grid_response = AgGrid(
-            df,
-            gridOptions=gridOptions,
-            data_return_mode='AS_INPUT', 
-            update_mode='MODEL_CHANGED', 
-            fit_columns_on_grid_load=True,
-            theme='dark', #Add theme color to the table
-            enable_enterprise_modules=True,
-            height=350, 
-            width='100%',
-            reload_data=False
-        )
-
-        grid_data = grid_response['data']
-        selected = grid_response['selected_rows'] 
-        dfs = pd.DataFrame(selected) #Pass the selected rows to a new dataframe df
-
-        #for row in dfs.iterrows():
-        #    df.loc[row,'media'] = pd.concat("st.image(",df[row,'sound'],")")
         
         
-        
-
     ################################################################################
-    # Option 4 - Appraise Sound NFT
+    # Option 4 - Display Multiple Sound NFTs
+    ################################################################################
+
+    elif choice == "Display Multiple Sound NFTs":
+        st.subheader("Display Multiple Sound NFTs")
+
+
+        accounts = w3.eth.accounts
+        selected_address = st.selectbox("Select Account", options=accounts)
+        # Contract function - calls # of tokens
+        tokens = contract.functions.balanceOf(selected_address).call()
+        
+        st.write(f"This address owns {tokens} tokens")
+        
+        # Populate data with token list
+        token_list = []
+        for i in range(tokens):
+
+            token_uri = contract.functions.tokenURI(i).call()
+            ipfs_hash = token_uri[6:]
+            token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
+            response = requests.get(token_url).json()
+            image = response['image']
+            name = response['name']
+            artist_name = response['artist name']
+            value = response['value']
+                   
+            image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
+
+            #img = qrcode.make(image_url)
+            #type(img)
+            #image_qr = img.save(f"{image}.jpeg")
+            #qr_file_image = Image.open("QR.jpeg")
+            #st.image(f"{image}.jpeg")
+
+            token_list.append(
+                {
+                    'token': i,
+                    'name': name,
+                    'artist name': artist_name,
+                    'value' : value,
+                    'sound url': image_url
+                    
+                    }
+            )
+        
+        token_list_df = pd.DataFrame(token_list).set_index(["token"])
+        st.write(token_list_df)
+
+        # Select multiple token ids for display    
+        token_id = st.multiselect("Sound NFT's", list(range(tokens)))
+
+        
+        #token_list = (list(range(tokens)))
+            
+        
+        if st.button('Display'):
+            col1, col2, col3,col4 = st.columns(4)
+            with col1:
+                st.subheader("Name")
+            with col2:
+                st.subheader("Artist")
+            with col3:
+                st.subheader("Value")
+            with col4:
+                st.subheader("Sound")
+            st.write("------------------------------------------------")
+
+            for i in token_id:
+                owner = contract.functions.ownerOf(i).call()
+                #st.write(f"Token is registered to {owner}")
+            
+
+                token_uri = contract.functions.tokenURI(i).call()
+                ipfs_hash = token_uri[6:]
+                token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
+                response = requests.get(token_url).json()
+                #st.write(f"The tokenURI is {token_url}")
+                image = response['image']
+                name = response['name']
+                artist_name = response['artist name']
+                value = response['value']
+                
+                   
+                image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
+            #    st.write(f"The soundURI is {image_url}")
+            #     img = qrcode.make(image_url)
+        #     type(img)
+        #     image_qr = img.save(f"{image}.jpeg")
+        #     #qr_file_image = Image.open("QR.jpeg")
+        #     st.image(f"{image}.jpeg")
+
+            
+
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                #    st.subheader("Name")
+                    st.write(name)
+                with col2:
+                #    st.subheader("Artist")    
+                    st.write(artist_name)
+                with col3:
+                #    st.subheader("Value")
+                    st.write(f"$ {value}")
+                with col4:
+                #    st.subheader("NFT")
+                    st.audio(image_url, format = "audio/ogg")
+                st.write("------------------------------------------------")
+            
+            
+    ################################################################################
+    # Option 5 - Appraise Sound NFT
     ################################################################################
 
     elif choice == "Appraise Sound NFT":
@@ -470,7 +578,7 @@ elif authentication_status:
         st.markdown("---")
 
     ################################################################################
-    # Option 5 - Get Appraisals
+    # Option 6 - Get Appraisals
     ################################################################################
 
     elif choice == "Get Appraisals":
