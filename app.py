@@ -179,7 +179,7 @@ elif authentication_status:
 
 
     # Menu Sidebar
-    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","About"]
+    menu = ["Home", "Create A Sound NFT", "Display A Sound NFT", "Display Multiple Sound NFTs", "My JANT Collection","Appraise Sound NFT","Get Appraisals","MarketPlace","About"]
     st.sidebar.header("Navigation")
     choice = st.sidebar.selectbox("Menu", menu)
     st.sidebar.write("Pick a selection!")
@@ -622,20 +622,21 @@ elif authentication_status:
     # Market Place - Open Sea
     ################################################################################    
 
-    st.sidebar.header("MarketPlace")
-    market_choices = ["Pick Endpoint","Assets", "Events", "Rarity"]
-    endpoint = st.sidebar.selectbox("OpenSea Enpoints", market_choices)
-
-    if market_choices == "Assets" or market_choices == "Events" or market_choices == "Rarity":
-  
+    #Create a market palce sidebar and choices.
+    elif choice == "MarketPlace":
+        st.sidebar.header("MarketPlace")
+        market_choices = ["Pick Endpoint","Assets", "Events", "Rarity"]
+        endpoint = st.sidebar.selectbox("OpenSea Enpoints", market_choices)
 
         st.title(f"OpenSea API Explorer - {endpoint}")
 
+        #Find all events for a collection, token or contract. This will tell us if events such as bids, tranfers, approvals etc are occuring.
         if endpoint == 'Events':
             collection = st.sidebar.text_input("Collection")
             asset_contract_address = st.sidebar.text_input("Contract Address")
             token_id = st.sidebar.text_input("Token ID")
-            event_type = st.sidebar.selectbox("Event Type", ['offer_entered', 'cancelled', 'bid_withdrawn', 'transfer', 'approve'])
+            event_type = st.sidebar.selectbox("Event Type", ['offer_entered', 'cancelled', 'bid_withdrawn', 'transfer'])
+            #Build on paramaters for api request. 
             params = {}
             if collection:
                 params['collection_slug'] = collection
@@ -645,11 +646,12 @@ elif authentication_status:
                 params['token_id'] = token_id
             if event_type:
                 params['event_type'] = event_type
-        
+
+            # we were not able to connect to the mainnet as our contract is not deployed. We also will need a openseas account, which is funded.
             r = requests.get('https://testnets-api.opensea.io/api/v1/events', params=params)
 
             events = r.json()
-            
+            #
             event_list = []
             for event in events['asset_events']:
                 if event_type == 'offer_entered':
@@ -664,9 +666,8 @@ elif authentication_status:
 
             df = pd.DataFrame(event_list, columns=['time', 'bidder', 'bid_amount', 'collection', 'token_id'])
             st.write(df)
-            st.write(events)
-            
-            
+            st.write(events)           
+                
 
         if endpoint == 'Assets':
             st.sidebar.header('Filters')
@@ -679,11 +680,10 @@ elif authentication_status:
 
             r = requests.get('https://testnets-api.opensea.io/api/v1/assets')
 
-            assets = r.json()["assets"]
+            assets = r.json()
+            
             st.subheader("Raw JSON Data")
-            st.write(r.json()["assets"])
-    
-               
+            st.write(r.json()["assets"])               
         
         
 
