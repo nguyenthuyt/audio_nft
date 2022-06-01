@@ -74,7 +74,7 @@ https://github.com/nguyenthuyt/audio_nft/blob/main/NFT.pptx
 
 ## Conclusion and Next Steps
 
-Our app.py file in its current form has acheived the goal of creating sound-based NFTs. We have sucessfully hosted a streamlit-based platform for creating, storing, viewing, playing and collecting audio NFTs.
+Our app.py file in its current form has achieved the goal of creating sound-based NFTs. We have sucessfully hosted a streamlit-based platform for creating, storing, viewing, playing and collecting audio NFTs.
 
 The next stage of development would involve migrating to a cloud hosted website. We would also look to deploy the Audio NFT smart contract to the Ethereum Mainnet. Additional development will be required to hard-limit the length of uploaded sound files to 5 seconds, as well as build out a connection to OpenSea which would allow our NFTs to be traded on the marketplace.
 
