@@ -153,7 +153,7 @@ elif authentication_status:
         st.write('Welcome *%s*' % (name))
         
         st.header("[J]ust [A]udio [N]on-fungible [T]okens")
-        #st.subheader("Gotta Collect Em All!")
+
 
         
         image_1 = Image.open("images/nft.png")
@@ -192,9 +192,6 @@ elif authentication_status:
             st.success("Successful File Upload")
             
             st.write("File Preview")
-            #st.write(dir(sound_file))
-            #file_details = {"filename": sound_file.name, "filetype": sound_file.type, "filesize": sound_file.size, "file directory": sound_file.__dict__}
-            #st.write(file_details)
             st.write(sound_file.__dict__)
             st.audio(sound_file, format = "audio/ogg")
 
@@ -269,10 +266,8 @@ elif authentication_status:
             img = qrcode.make(image_url)
             type(img)
             image_qr = img.save(f"{image}.jpeg")
-            #qr_file_image = Image.open("QR.jpeg")
+            
             st.image(f"{image}.jpeg")
-
-            #generate_spect(image_url)
 
             
 
@@ -433,12 +428,7 @@ elif authentication_status:
                     
                 image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
 
-                #img = qrcode.make(image_url)
-                #type(img)
-                #image_qr = img.save(f"{image}.jpeg")
-                #qr_file_image = Image.open("QR.jpeg")
-                #st.image(f"{image}.jpeg")
-
+            
                 token_list.append(
                     {
                         'token': i,
@@ -473,13 +463,13 @@ elif authentication_status:
                 reload_data=False
             )
 
-            #st.write(token_list_df)
+            
 
             # Select multiple token ids for display    
             token_id = st.multiselect("Sound NFT's", list(range(tokens)))
 
             
-            #token_list = (list(range(tokens)))
+            
                 
             
             if st.button('Display'):
@@ -496,14 +486,12 @@ elif authentication_status:
 
                 for i in token_id:
                     owner = contract.functions.ownerOf(i).call()
-                    #st.write(f"Token is registered to {owner}")
-                
-
+            
                     token_uri = contract.functions.tokenURI(i).call()
                     ipfs_hash = token_uri[6:]
                     token_url = (f"https://gateway.pinata.cloud/ipfs/{ipfs_hash}")
                     response = requests.get(token_url).json()
-                    #st.write(f"The tokenURI is {token_url}")
+                 
                     image = response['image']
                     name = response['name']
                     artist_name = response['artist name']
@@ -511,13 +499,7 @@ elif authentication_status:
                     
                     
                     image_url = (f"https://gateway.pinata.cloud/ipfs/{image}")
-                #    st.write(f"The soundURI is {image_url}")
-                #     img = qrcode.make(image_url)
-            #     type(img)
-            #     image_qr = img.save(f"{image}.jpeg")
-            #     #qr_file_image = Image.open("QR.jpeg")
-            #     st.image(f"{image}.jpeg")
-
+            
                 
 
                     col1, col2, col3, col4 = st.columns(4)
@@ -559,35 +541,7 @@ elif authentication_status:
         st.markdown("---")
 
     ################################################################################
-    # Option 6 - Get Appraisals
-    ################################################################################
-
-    elif choice == "Get Appraisals":
-        st.subheader("## Get the appraisal report history")
-        st.title("Sound NFT Appraisal System")
-        st.write("Choose an account to get started")
-        accounts = w3.eth.accounts
-        address = st.selectbox("Select Account", options=accounts)
-        st.markdown("---")
-
-        art_token_id = st.number_input("Sound Token ID", value=0, step=1)
-        if st.button("Get Appraisal Reports"):
-            appraisal_filter = contract.events.Appraisal.createFilter(
-                fromBlock=0,
-                argument_filters={"tokenId": art_token_id}
-            )
-            appraisals = appraisal_filter.get_all_entries()
-            if appraisals:
-                for appraisal in appraisals:
-                    report_dictionary = dict(appraisal)
-                    st.markdown("### Appraisal Report Event Log")
-                    st.write(report_dictionary)
-                    st.markdown("### Appraisal Report Details")
-                    st.write(report_dictionary["args"])
-            else:
-                st.write("This sound NFT has no new appraisals")
-    ################################################################################
-    # Market Place - Open Sea
+    # Option 6: Market Place - Open Sea
     ################################################################################    
 
     #Create a market palce sidebar and choices.
@@ -654,7 +608,7 @@ elif authentication_status:
             st.write(r.json()["assets"])               
         
     ################################################################################
-    # Option 6 - About
+    # Option 7 - About
     ################################################################################
 
     elif choice == "About":
